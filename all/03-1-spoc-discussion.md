@@ -37,6 +37,199 @@ NOTICE
 请参考ucore lab2代码，采用`struct pmm_manager` 根据你的`学号 mod 4`的结果值，选择四种（0:最优匹配，1:最差匹配，2:最先匹配，3:buddy systemm）分配算法中的一种或多种，在应用程序层面(可以 用python,ruby,C++，C，LISP等高语言)来实现，给出你的设思路，并给出测试用例。 (spoc)
 
 --- 
+  - [x]
+  代码：3 buddy system
+#include <iostream>
+#include <stdio.h>
+#include <stdlib.h> 
+using namespace std;
+
+struct block{
+	int free;
+	int start;
+	int size;
+	block * next;
+};
+
+struct li{
+       block * blo;
+       li * next;      
+};
+
+li *list2;
+
+block * list;
+int length = 1024 ;
+void alloc(int sz)
+{
+	block * q = list;
+	list2 = new li;
+	li * p = list2;
+	//block * hh = list2 -> next;
+	list2 -> next = NULL;
+	while(list != NULL)
+	{
+		if(list -> size >= sz && list -> free == 0)
+		{
+            
+		    list2 -> blo = list;
+			list2 -> next = new li;
+			list2 = list2 -> next;
+			list2 -> next = NULL;
+		}
+		list = list -> next;
+	}
+	//list2 = NULL;
+
+	 //cout << p-> start <<" "<<p->size<<endl;
+	block * min = new block;
+	min -> size = length;
+	while( p -> next != NULL)
+	{
+        //cout <<"PP "<< p-> start <<" "<<p->size<<endl;
+		if(p -> blo -> size <= min -> size)
+		{
+             min = p -> blo;
+            // cout << min  -> start <<endl;
+        }
+		//system("pause");
+		p = p -> next;
+	}
+   
+	while (min -> size >= 2 * sz)
+	{
+           
+		block * new_block = new block;
+		new_block -> free = 0;
+		new_block -> size = min -> size/2;
+		new_block -> start = min -> start + (min -> size)/2;
+		new_block -> next  = min -> next;
+		//cout << new_block -> start <<" " << new_block -> size <<" " <<endl;
+		 
+		min -> next = new_block;
+		min -> size  = min -> size /2;
+		//cout <<"q "<< q -> start <<" "<<q -> size <<endl;
+	//	cout << min -> start <<" " << min ->size <<" "<<endl;
+	}
+	min -> free  = 1;
+	
+
+   
+	list = q;
+	
+}
+
+
+bool ok(int n,int size)
+{
+	if( n %size == 0)
+		return true;
+	return false;
+}
+
+
+void merge( block * p)
+{
+	if(p -> next != NULL && (p -> next) ->free == 0 && (p -> next) -> size == p -> size)
+	{
+		if(ok(p -> start,p -> size *2))
+		{
+		  block * qq = p -> next;
+		  p -> next = qq -> next;
+		  p -> size *= 2;
+		   delete qq;
+		  merge(p);
+		 
+		  
+		}
+	}
+	
+	else
+	{
+		block * w = list;
+		block * q = new block;
+		while(list != NULL)
+		{
+			if(list -> next == p)
+			{
+				q = p;
+			}
+			list = list -> next;
+		}
+		list = w;
+		if( q -> free == 0 && q -> size == p -> size)
+		{
+			if(ok(q->start,q -> size *2))
+			{
+				q -> size *= 2;
+				q -> next = p->next;
+				delete(p);
+				merge(q);
+			}
+		
+		}
+	
+	}
+}
+
+
+void free( int st )
+{
+	block * q = list;
+	block  * p = new block;
+	while(list != NULL)
+	{
+		if(list -> start == st && list -> free == 1)
+		{
+           // cout << list -> start <<" "<<list -> size <<endl;
+			list -> free = 0;
+			p = list;
+			list = q;
+			merge(p);
+			break;
+		}
+		list = list -> next;
+	}
+	list = q;
+}
+
+
+void print()
+{
+     block * q = list;
+     while(list != NULL)
+     {
+              cout << list -> start <<" " << list->size <<" " << list-> free<<endl;
+              list = list -> next;
+     }
+     list = q;
+    
+     
+}
+
+block * init()
+{
+    list = new block;
+	list -> free = 0;
+	list -> start = 0;
+	list -> size  = length;
+	list -> next = NULL;
+	
+}
+int main()
+{
+    init();
+    alloc(512);
+    print();
+    free(0);
+    print();
+    system("pause");
+	return 0;
+}
+
+设计思路： 通过定义一个struct block 来表示内存块，其中包括了 size,start,free(是否被使用),next;形成了链表。然后再通过视频里的方法实现了内存的分配与释放。
+测试： 总长度为1024，先分配一个512长度的内存块，输出为 0 512 1 ；512 512 0；其中分别为start，size，free;
+       再将这512长度的内存块释放掉，输出为 0 1024 0；
 
 ## 扩展思考题
 
