@@ -54,16 +54,33 @@ PT6..0:页表的物理基址>>5
 ```
 在[物理内存模拟数据文件](./03-2-spoc-testdata.md)中，给出了4KB物理内存空间的值，请回答下列虚地址是否有合法对应的物理内存，请给出对应的pde index, pde contents, pte index, pte contents。
 ```
-Virtual Address 6c74
-Virtual Address 6b22
+Virtual Address 6c74 11011 00011 10100 
+  --> pde index : 0x1b pde contents:(valid 1,pfn 0x20)
+    --> pte index : 0x03 pte contents :(valid 1 pfn 0x61)
+      --> Translates to Physical Address 0x6114 --> Value: 06
+Virtual Address 6b22 11010 11001 00010
+  --> pde index : 0x1a pde contents:(valid 1,pfn 0x52)
+    --> pte index : 0x19 pte contents :(valid 1,pfn 0x47)
+      --> Translates to Physical Address 0x4702 --> Value: 1a
 Virtual Address 03df
+  --> pde index : 0x00 pde contents:(valid 1,pfn 0x5a)
+    --> pte index : 0x1e pte contents :(valid 1 pfn 0x05)
+      --> Translates to Physical Address  --> Value: f
+ 后面的均是用程序运行的，只给出最后结果
 Virtual Address 69dc
+  -->Fault (page table entry not valid)
 Virtual Address 317a
+  --> 0x1e
 Virtual Address 4546
+  -->Fault (page table entry not valid)
 Virtual Address 2c03
+  -->0x16
 Virtual Address 7fd7
+  -->Fault (page table entry not valid)
 Virtual Address 390e
+  -->Fault (page directory entry not valid)
 Virtual Address 748b
+  -->Fault (page table entry not valid)
 ```
 
 比如答案可以如下表示：
