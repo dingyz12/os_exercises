@@ -105,22 +105,19 @@ Virtual Address 7268:
 （3）请基于你对原理课二级页表的理解，并参考Lab2建页表的过程，设计一个应用程序（可基于python, ruby, C, C++，LISP等）可模拟实现(2)题中描述的抽象OS，可正确完成二级页表转换。
 
 - [x]
->  代码如下（C++）：
-  #include <iostream>
- #include <fstream>
- #include <sstream>
+> 代码如下（C++）：
+\#include <iostream>
+\#include <fstream>
+\#include <sstream>
 int memo[4096];//4KB内存
 uint32_t get_page(uint32_t v_addr)
 {
     uint32_t ans = 0;
     uint32_t pde = v_addr & 0x00007c00;
     uint32_t pte = v_addr & 0x000003e0;
-    
     return ans;
 }
-
 using namespace std;
-         
 int main(int argc, const char * argv[]) {
     ifstream fin("1.txt");
     char s[100];
@@ -168,7 +165,6 @@ int main(int argc, const char * argv[]) {
              printf("pte index : %x pte contents :(valid %d, pfn %x)\n",pte,valid2,pframe %(1<<7));
             int pp = ((pframe %(1<<7)) << 5) + offset;
             printf("%x\n",memo[pp]);
-            
         }
     }
     system("pause");
