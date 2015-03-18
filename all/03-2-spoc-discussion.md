@@ -174,6 +174,7 @@ int main(int argc, const char * argv[]) {
 
 （4）假设你有一台支持[反置页表](http://en.wikipedia.org/wiki/Page_table#Inverted_page_table)的机器，请问你如何设计操作系统支持这种类型计算机？请给出设计方案。
  - [x]
+
  > 建立一个反置列表，通过页帧来对应页表号；在查找的时候利用Hash来加速，所以需要建立一个Hash的list，在产生冲突时，可以通过查找   这个list来寻找真确的页帧。
  (5)[X86的页面结构](http://os.cs.tsinghua.edu.cn/oscourse/OS2015/lecture06#head-1f58ea81c046bd27b196ea2c366d0a2063b304ab)
 --- 
