@@ -83,7 +83,7 @@
         	int page_number;
 		node * next;
 		node * prev;
-	};
+		};
 		node * root;
 		int T = 2;
 		int n = 10;
