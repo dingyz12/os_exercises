@@ -92,8 +92,8 @@
 		int t_current;
 		int cache[5] = {0,3,4,-1,-1};
 		int workset[2] = {0,3};
-	bool page_miss(int x)
-	{
+		bool page_miss(int x)
+		{
 		node * p = root;
 		while(p != NULL)
 		{
