@@ -72,8 +72,8 @@
  [x] 缺页率置换算法：
          
         #include <iostream>
-	#include <stdlib.h>
-	#include <stdio.h>
+	##include <stdlib.h>
+	##include <stdio.h>
  	using namespace std;
 	struct node 
 	{
