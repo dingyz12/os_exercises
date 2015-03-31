@@ -69,6 +69,160 @@
 
 (2)（spoc）根据你的`学号 mod 4`的结果值，确定选择四种替换算法（0：LRU置换算法，1:改进的clock 页置换算法，2：工作集页置换算法，3：缺页率置换算法）中的一种来设计一个应用程序（可基于python, ruby, C, C++，LISP等）模拟实现，并给出测试。请参考如python代码或独自实现。
  - [页置换算法实现的参考实例](https://github.com/chyyuu/ucore_lab/blob/master/related_info/lab3/page-replacement-policy.py)
+ - [x] 缺页率置换算法：
+         
+         #include <iostream>
+#include <stdlib.h>
+#include <stdio.h>
+
+using namespace std;
+
+
+struct node 
+{
+	int page_number;
+	node * next;
+	node * prev;
+};
+node * root;
+
+int T = 2;
+
+int n = 10;
+int page_visit[10] = {2,2,3,1,2,4,2,4,0,3};
+int t_last = -1 ;
+int t_current;
+int cache[5] = {0,3,4,-1,-1};
+int workset[2] = {0,3};
+
+
+bool page_miss(int x)
+{
+	node * p = root;
+	while(p != NULL)
+	{
+		if( p -> page_number == x)
+		return 0;
+		p = p -> next;
+	}
+	return 1;
+}
+
+
+bool not_in_workset(int x)
+{
+	if(x != workset[0] && x != workset[1])
+		return 1;
+	return 0;
+}
+void func()
+{
+	int size = 3;
+	for(int i = 0;i<n;i++)
+	{
+		
+		int x = page_visit[i];
+		cout << "visiting: "<<char(x+97)<<endl;
+		if(page_miss(x))  //page missing
+		{
+			t_current = i;
+			if(t_current - t_last > T) //standing set is too big;
+			{
+				    cout <<"missing and the standing set is too big\n";
+					node * p = root;
+					node * p2 ;
+					while(p!=NULL)
+					{
+						//cout << workset[0]<< " "<<workset[1] <<endl;
+						//cout << not_in_workset(p -> page_number)<<endl;
+						if( not_in_workset(p -> page_number))
+						{
+							if( p != root)
+							{
+								if(p -> next == NULL)
+								{
+									cout << "delete: "<< char(p -> page_number  + 97) <<endl;
+									size --;
+									p -> prev -> next = NULL;
+									p -> prev = NULL;
+								}
+								
+								else
+								{
+								p -> prev -> next = p -> next;
+								p -> next -> prev = p -> prev;
+								cout << "delete: "<< char(p -> page_number  + 97) <<endl;
+								size --;
+								}
+							}
+							if(p == root)
+							{
+								cout << "delete: "<< char(p -> page_number  + 97) <<endl;
+								size --;
+								root = p -> next;
+								root -> prev = NULL;
+							}
+						}
+						p2 = p;
+						p = p->next;
+						
+					}
+				
+				node * q = new node();
+				q -> page_number = x;
+				cout <<"add: "<<char(x + 97)<<endl;
+				p2 -> next = q;
+				q -> prev = p2;
+				q -> next = NULL;
+				
+			}
+			else  //standing set is too small
+			{
+				 cout <<"missing and the standing set is too small\n";
+				 cout <<"add: "<<char(x + 97)<<endl;
+				node * q = new node();
+				q -> page_number = x;
+				node * p = root;
+				while( p-> next != NULL)
+					p = p -> next;
+				
+				p -> next = q;
+				q -> prev = p;
+				q -> next = NULL;
+			
+			}
+		
+		}
+	
+	workset[0] = workset[1];
+	workset[1] = x;
+	
+	
+	
+	}
+	
+	
+
+
+
+}
+int main()
+{
+   
+	root = new node();
+	root -> prev = NULL;
+	root -> page_number = 0;
+	root -> next = new node();
+	root -> next -> page_number = 3;
+	node * p = root -> next;
+	p -> prev = root;
+	p -> next = new node();
+	p -> next -> page_number = 4;
+	p -> next -> prev = p;
+	p -> next -> next = NULL;
+	func();
+
+}
  
 ## 扩展思考题
 （1）了解LIRS页置换算法的设计思路，尝试用高级语言实现其基本思路。此算法是江松博士（导师：张晓东博士）设计完成的，非常不错！
