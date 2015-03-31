@@ -80,7 +80,7 @@
         using namespace std;
         struct node 
         {
-		int page_number;
+        	int page_number;
 		node * next;
 		node * prev;
 	};
