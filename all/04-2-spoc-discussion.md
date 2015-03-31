@@ -103,14 +103,14 @@
 		}
 		return 1;
 		}
-	bool not_in_workset(int x)
-	{
+		bool not_in_workset(int x)
+		{
 		if(x != workset[0] && x != workset[1])
 			return 1;
 		return 0;
-	}
-	void func()
-	{
+		}
+		void func()
+		{
 		int size = 3;
 		for(int i = 0;i<n;i++)
 		{
