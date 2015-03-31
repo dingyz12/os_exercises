@@ -102,7 +102,7 @@
 			p = p -> next;
 		}
 		return 1;
-	}
+		}
 	bool not_in_workset(int x)
 	{
 		if(x != workset[0] && x != workset[1])
