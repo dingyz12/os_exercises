@@ -71,9 +71,9 @@
  - [页置换算法实现的参考实例](https://github.com/chyyuu/ucore_lab/blob/master/related_info/lab3/page-replacement-policy.py)
  - [x] 缺页率置换算法：
          
-         #include <iostream>
-	 #include <stdlib.h>
-	 #include <stdio.h>
+        #include <iostream>
+	#include <stdlib.h>
+	#include <stdio.h>
 
  	using namespace std;
 
