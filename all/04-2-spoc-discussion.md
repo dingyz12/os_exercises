@@ -75,9 +75,11 @@
  [x] 缺页率置换算法：
         
         #include <iostream>
+        #include <stdlib.h>
+        #include <stdio.h>
         using namespace std;
-	struct node 
-	{
+        struct node 
+        {
 		int page_number;
 		node * next;
 		node * prev;
