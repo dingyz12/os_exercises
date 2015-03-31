@@ -72,157 +72,157 @@
  - [x] 缺页率置换算法：
          
          #include <iostream>
-#include <stdlib.h>
-#include <stdio.h>
+	#include <stdlib.h>
+	#include <stdio.h>
 
-using namespace std;
-
-
-struct node 
-{
-	int page_number;
-	node * next;
-	node * prev;
-};
-node * root;
-
-int T = 2;
-
-int n = 10;
-int page_visit[10] = {2,2,3,1,2,4,2,4,0,3};
-int t_last = -1 ;
-int t_current;
-int cache[5] = {0,3,4,-1,-1};
-int workset[2] = {0,3};
+	using namespace std;
 
 
-bool page_miss(int x)
-{
-	node * p = root;
-	while(p != NULL)
+	struct node 
 	{
-		if( p -> page_number == x)
-		return 0;
-		p = p -> next;
-	}
-	return 1;
-}
+		int page_number;
+		node * next;
+		node * prev;
+	};
+	node * root;
+
+	int T = 2;
+
+	int n = 10;
+	int page_visit[10] = {2,2,3,1,2,4,2,4,0,3};
+	int t_last = -1 ;
+	int t_current;
+	int cache[5] = {0,3,4,-1,-1};
+	int workset[2] = {0,3};
 
 
-bool not_in_workset(int x)
-{
-	if(x != workset[0] && x != workset[1])
-		return 1;
-	return 0;
-}
-void func()
-{
-	int size = 3;
-	for(int i = 0;i<n;i++)
+	bool page_miss(int x)
 	{
-		
-		int x = page_visit[i];
-		cout << "visiting: "<<char(x+97)<<endl;
-		if(page_miss(x))  //page missing
+		node * p = root;
+		while(p != NULL)
 		{
-			t_current = i;
-			if(t_current - t_last > T) //standing set is too big;
+			if( p -> page_number == x)
+			return 0;
+			p = p -> next;
+		}
+		return 1;
+	}
+
+
+	bool not_in_workset(int x)
+	{
+		if(x != workset[0] && x != workset[1])
+			return 1;
+		return 0;
+	}
+	void func()
+	{
+		int size = 3;
+		for(int i = 0;i<n;i++)
+		{
+		
+			int x = page_visit[i];
+			cout << "visiting: "<<char(x+97)<<endl;
+			if(page_miss(x))  //page missing
 			{
-				    cout <<"missing and the standing set is too big\n";
-					node * p = root;
-					node * p2 ;
-					while(p!=NULL)
-					{
+				t_current = i;
+				if(t_current - t_last > T) //standing set is too big;
+				{
+				    	cout <<"missing and the standing set is too big\n";
+						node * p = root;
+						node * p2 ;
+						while(p!=NULL)
+						{
 						//cout << workset[0]<< " "<<workset[1] <<endl;
 						//cout << not_in_workset(p -> page_number)<<endl;
-						if( not_in_workset(p -> page_number))
-						{
-							if( p != root)
+							if( not_in_workset(p -> page_number))
 							{
-								if(p -> next == NULL)
+								if( p != root)
+								{
+									if(p -> next == NULL)
+									{
+										cout << "delete: "<< char(p -> page_number  + 97) <<endl;
+										size --;
+										p -> prev -> next = NULL;
+										p -> prev = NULL;
+									}
+								
+									else
+									{
+										p -> prev -> next = p -> next;
+										p -> next -> prev = p -> prev;
+										cout << "delete: "<< char(p -> page_number  + 97) <<endl;
+										size --;
+									}
+								}
+								if(p == root)
 								{
 									cout << "delete: "<< char(p -> page_number  + 97) <<endl;
 									size --;
-									p -> prev -> next = NULL;
-									p -> prev = NULL;
-								}
-								
-								else
-								{
-								p -> prev -> next = p -> next;
-								p -> next -> prev = p -> prev;
-								cout << "delete: "<< char(p -> page_number  + 97) <<endl;
-								size --;
+									root = p -> next;
+									root -> prev = NULL;
 								}
 							}
-							if(p == root)
-							{
-								cout << "delete: "<< char(p -> page_number  + 97) <<endl;
-								size --;
-								root = p -> next;
-								root -> prev = NULL;
-							}
-						}
-						p2 = p;
-						p = p->next;
+							p2 = p;
+							p = p->next;
 						
-					}
+						}
+					
+					node * q = new node();
+					q -> page_number = x;
+					cout <<"add: "<<char(x + 97)<<endl;
+					p2 -> next = q;
+					q -> prev = p2;
+					q -> next = NULL;
 				
-				node * q = new node();
-				q -> page_number = x;
-				cout <<"add: "<<char(x + 97)<<endl;
-				p2 -> next = q;
-				q -> prev = p2;
-				q -> next = NULL;
+				}
+				else  //standing set is too small
+				{
+				 	cout <<"missing and the standing set is too small\n";
+					 cout <<"add: "<<char(x + 97)<<endl;
+					node * q = new node();
+					q -> page_number = x;
+					node * p = root;
+					while( p-> next != NULL)
+						p = p -> next;
 				
-			}
-			else  //standing set is too small
-			{
-				 cout <<"missing and the standing set is too small\n";
-				 cout <<"add: "<<char(x + 97)<<endl;
-				node * q = new node();
-				q -> page_number = x;
-				node * p = root;
-				while( p-> next != NULL)
-					p = p -> next;
-				
-				p -> next = q;
-				q -> prev = p;
-				q -> next = NULL;
+					p -> next = q;
+					q -> prev = p;
+					q -> next = NULL;
 			
-			}
+				}
 		
+			}
+	
+		workset[0] = workset[1];
+		workset[1] = x;
+	
+	
+	
 		}
 	
-	workset[0] = workset[1];
-	workset[1] = x;
 	
-	
-	
+
+
+
 	}
-	
-	
-
-
-
-}
-int main()
-{
+	int main()
+	{
    
-	root = new node();
-	root -> prev = NULL;
-	root -> page_number = 0;
-	root -> next = new node();
-	root -> next -> page_number = 3;
-	node * p = root -> next;
-	p -> prev = root;
-	p -> next = new node();
-	p -> next -> page_number = 4;
-	p -> next -> prev = p;
-	p -> next -> next = NULL;
-	func();
+		root = new node();
+		root -> prev = NULL;
+		root -> page_number = 0;
+		root -> next = new node();
+		root -> next -> page_number = 3;
+		node * p = root -> next;
+		p -> prev = root;
+		p -> next = new node();
+		p -> next -> page_number = 4;
+		p -> next -> prev = p;
+		p -> next -> next = NULL;
+		func();
 
-}
+	}
  
 ## 扩展思考题
 （1）了解LIRS页置换算法的设计思路，尝试用高级语言实现其基本思路。此算法是江松博士（导师：张晓东博士）设计完成的，非常不错！
