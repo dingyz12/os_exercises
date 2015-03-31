@@ -84,14 +84,14 @@
 		node * next;
 		node * prev;
 	};
-	node * root;
-	int T = 2;
-	int n = 10;
-	int page_visit[10] = {2,2,3,1,2,4,2,4,0,3};
-	int t_last = -1 ;
-	int t_current;
-	int cache[5] = {0,3,4,-1,-1};
-	int workset[2] = {0,3};
+		node * root;
+		int T = 2;
+		int n = 10;
+		int page_visit[10] = {2,2,3,1,2,4,2,4,0,3};
+		int t_last = -1 ;
+		int t_current;
+		int cache[5] = {0,3,4,-1,-1};
+		int workset[2] = {0,3};
 	bool page_miss(int x)
 	{
 		node * p = root;
