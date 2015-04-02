@@ -44,36 +44,37 @@ NOTICE
 ---
 
 (12)swap_init()做了些什么？
- - [x] 交换页初始化
+   - [x] 交换页初始化
 (13)vmm_init()做了些什么？
-- [x] check vma 和 check pg_fault处理
+
+  - [x] check vma 和 check pg_fault处理
 (14)vma_struct数据结构的功能？
-- [x] virtual continuous memory area
+  - [x] virtual continuous memory area
 (15)mmap_list是什么列表？
-- [x] 将vma按照起始地址连接起来
+  - [x] 将vma按照起始地址连接起来
 (16)外存中的页面后备如何找到？
-- [x] 通过ide_read_sec()函数找到
+  - [x] 通过ide_read_sec()函数找到
 (17)vma_struct和mm_struct的关系是什么？
-- [x] mm_struct将vma组织起来，并且对其进行控制
+  - [x] mm_struct将vma组织起来，并且对其进行控制
 > 合法的连续虚拟地址区域、整个进程的地址空间
-- [x] 不会
+  - [x] 不会
 (18)画数据结构图，描述进程的虚拟地址空间、页表项、物理页面和后备页面的关系；
 
 ### 10.4 页访问异常
 ---
 
 (19)页面不在内存和页面访问非法的处理中有什么区别？对应的代码区别在哪？
-- [x] 页面不存在时，分配一个新的页面；
+  - [x] 页面不存在时，分配一个新的页面；
 
       页面访问非法时，新建一个pte；
 (20)find_vma()做了些什么？
-- [x] 在 mm_struct中 找到一个起始地址为addr_atart的vma；
+  - [x] 在 mm_struct中 找到一个起始地址为addr_atart的vma；
 (21)swapfs_read()做了些什么？
-- [x] 根据swap_entry，读入一个页面
+  - [x] 根据swap_entry，读入一个页面
 (22)缺页时的页面创建代码在哪？
-- [x] pmm.c中的pgdir_alloc_page()函数
+  - [x] pmm.c中的pgdir_alloc_page()函数
 (23)struct rb_tree数据结构的原理是什么？在虚拟管理中如何用它的？
-- [x] 红黑树，给节点染色；
+  - [x] 红黑树，给节点染色；
 
 (24)页目录项和页表项的dirty bit是何时，由谁置1的？
 
