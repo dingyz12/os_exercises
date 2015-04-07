@@ -376,10 +376,6 @@ class scheduler:
             # ENDCASE: check if currently running thing is out of instructions
             self.check_if_done()
         return (clock_tick)
-#
-# PARSE ARGUMENTS
-#
-
 parser = OptionParser()
 parser.add_option('-s', '--seed', default=0, help='the random seed', action='store', type='int', dest='seed')
 parser.add_option('-l', '--processlist', default='',
