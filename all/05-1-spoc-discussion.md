@@ -376,7 +376,6 @@ class scheduler:
             # ENDCASE: check if currently running thing is out of instructions
             self.check_if_done()
         return (clock_tick)
-        
 #
 # PARSE ARGUMENTS
 #
