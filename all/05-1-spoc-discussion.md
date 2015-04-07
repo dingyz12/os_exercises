@@ -20,34 +20,51 @@ NOTICE
 - 进程控制块的功能是什么？
  - [x] 进程控制块负责控制和管理进程运行的过程；
 - 进程控制块中包括什么信息？
- - [x] 进程的ID
+ - [x] 进程的ID等标志信息；进程的控制信息如当前指令指针、函数调用与返回的栈顶、保护的寄存器等。
 
 ### 11.3 进程状态
 
 - 进程生命周期中的相关事件有些什么？它们对应的进程状态变化是什么？
+  - [x] 进程抢占、唤醒、创建、结束、等待；
 - 进程切换过程中的几个关键代码分析
+   - [x] 进程执行有可能会转到进程等待、进程就绪等状态；进程等待会进入进程就绪；进程就绪会进入进程执行状态。
 - 时钟中断触发调度函数的启动
+   - [x] 进程先进入等待状态；CPU会执行别的进程；当时间够了的时候，进程进入就绪状态；在条件满足时，进程进入执行状态。
 - 当前进程的现场保存代码
+   - [x] 不知道
 - 进程切换代码
+   - [x] 不知道
 　＞　下一个运行进程的现场恢复
 
 ### 11.4 三状态进程模型
 
 - 运行、就绪和等待三种状态的含义？
+ - [x] 运行是指进程正在执行；就绪是指进程的资源已经满足，可以进行执行；等待是指进程的某一项不满足，因此需要等待条件。
 - 分析的4个相关状态转换代码和状态修改代码
-
+ - [x] 看了代码
 ### 11.5 挂起进程模型
 
 - 引入挂起状态的目的是什么？内存中的什么内容放到外存中，就算是挂起状态？
-
+ - [x] 为了减少内存的占用。放入到外存中的进程，进程在短时间内不会被执行，被称为挂起状态。
 ### 11.6 线程的概念
 
 - 引入线程的目的是什么？什么是线程？
+ - [x] 为了减少程序并发执行所付出的时空开销，使操作系统具有更好的并发性。
+ 
+       线程，有时被称为轻量级进程(Lightweight Process，LWP），是程序执行流的最小单元。
 - 进程与线程的联系和区别是什么？
-
+   -  一个线程只能属于一个进程，一个进程可能有多个线程；
+   -  进程中的线程共享一些数据与资源，并发性较好；
+   -  线程的系统开销较小。
 ### 11.8 内核线程
 
 - 用户线程与内核线程的区别是什么？
+ - 内核线程建立和销毁都是由操作系统负责、通过系统调用完成的，操作系统在调度时，参考各进程内的线程运行情况做出调度决定，如果一
+ 
+个进程中没有就绪态的线程，那么这个进程也不会被调度占用CPU;
+ - 用户线程指不需要内核支持而在用户程序中实现的线程，其不依赖于操作系统核心，用户进程利用线程库提供创建、同步、调度和管理线程
+ 
+的函数来控制用户线程。
 
 ## SPOC小组思考题
 
@@ -146,3 +163,253 @@ Time     PID: 0     PID: 1
  10     RUN:yld      READY 
  11     RUNNING       DONE 
 ```
+代码如下：
+     
+     #! /usr/bin/env python
+
+import sys
+from optparse import OptionParser
+import random
+
+# process states
+STATE_RUNNING = 'RUNNING'
+STATE_READY = 'READY'
+STATE_DONE = 'DONE'
+
+# members of process structure
+PROC_CODE = 'code_'
+PROC_PC = 'pc_'
+PROC_ID = 'pid_'
+PROC_STATE = 'proc_state_'
+
+# things a process can do
+DO_COMPUTE = 'cpu'
+DO_YIELD = 'yld'
+
+
+class scheduler:
+    def __init__(self):
+        # keep set of instructions for each of the processes
+        self.proc_info = {}
+        return
+
+    def new_process(self):
+        proc_id = len(self.proc_info)
+        self.proc_info[proc_id] = {}
+        self.proc_info[proc_id][PROC_PC] = 0
+        self.proc_info[proc_id][PROC_ID] = proc_id
+        self.proc_info[proc_id][PROC_CODE] = []
+        self.proc_info[proc_id][PROC_STATE] = STATE_READY
+        return proc_id
+
+    def load(self, program_description):
+        proc_id = self.new_process()
+        tmp = program_description.split(':')
+        if len(tmp) != 2:
+            print('Bad description (%s): Must be number <x:y>') 
+            print('  where X is the number of instructions')
+            print('  and Y is the percent change that an instruction is CPU not YIELD')
+            exit(1)
+
+        num_instructions, chance_cpu = int(tmp[0]), float(tmp[1])/100.0
+        for i in range(num_instructions):
+            if random.random() < chance_cpu:
+                self.proc_info[proc_id][PROC_CODE].append(DO_COMPUTE)
+            else:
+                self.proc_info[proc_id][PROC_CODE].append(DO_YIELD)
+        return
+
+    #change to READY STATE, the current proc's state should be expected
+    #if pid==-1, then pid=self.curr_proc
+    def move_to_ready(self, expected, pid=-1):
+        #YOUR CODE
+        if pid == -1:
+           pid = self.curr_proc
+        if self.proc_info[self.curr_proc][PROC_STATE] == expected :
+            self.proc_info[pid][PROC_STATE] = STATE_READY
+        else:
+            assert "error"
+        return
+
+    #change to RUNNING STATE, the current proc's state should be expected
+    def move_to_running(self, expected):
+        #YOUR CODE
+        #print('self.curr_proc')
+        if self.proc_info[self.curr_proc][PROC_STATE] == expected :
+            #print("self.curr_proc")
+            self.proc_info[self.curr_proc][PROC_STATE] = STATE_RUNNING
+        else:
+            assert "error"
+        
+        return
+
+    #change to DONE STATE, the current proc's state should be expected
+    def move_to_done(self, expected):
+        #YOUR CODE
+	    #self.proc_info[self.curr_proc][PROC_STATE] = STATE_DONE
+        if self.proc_info[self.curr_proc][PROC_STATE] == expected:
+            self.proc_info[self.curr_proc][PROC_STATE] = STATE_DONE
+        else:
+        	assert "error"
+        return
+
+    #choose next proc using FIFO/FCFS scheduling, If pid==-1, then pid=self.curr_proc
+    def next_proc(self, pid=-1):
+        #YOUR CODE
+        check = 0
+        num = -1
+        if pid == -1:
+            pid = self.curr_proc
+        for i in range(pid,len(self.proc_info)):
+            if self.proc_info[i][PROC_STATE] == STATE_READY:
+                num = i
+                check = 1
+                break
+        
+        if check == 0:
+            for i in range(0,pid):
+                if self.proc_info[i][PROC_STATE] == STATE_READY:
+        	        num = i
+        if num == -1:
+            num = self.curr_proc
+        return num
+
+    def get_num_processes(self):
+        return len(self.proc_info)
+
+    def get_num_instructions(self, pid):
+        return len(self.proc_info[pid][PROC_CODE])
+
+    def get_instruction(self, pid, index):
+        return self.proc_info[pid][PROC_CODE][index]
+
+    def get_num_active(self):
+        num_active = 0
+        for pid in range(len(self.proc_info)):
+            if self.proc_info[pid][PROC_STATE] != STATE_DONE:
+                num_active += 1
+        return num_active
+
+    def get_num_runnable(self):
+        num_active = 0
+        for pid in range(len(self.proc_info)):
+            if self.proc_info[pid][PROC_STATE] == STATE_READY or \
+                   self.proc_info[pid][PROC_STATE] == STATE_RUNNING:
+                num_active += 1
+        return num_active
+
+    def space(self, num_columns):
+        for i in range(num_columns):
+            print('%10s' % ' '),
+
+    def check_if_done(self):
+        if len(self.proc_info[self.curr_proc][PROC_CODE]) == 0:
+            if self.proc_info[self.curr_proc][PROC_STATE] == STATE_RUNNING:
+                self.move_to_done(STATE_RUNNING)
+                self.next_proc()
+        return
+
+    def run(self):
+        clock_tick = 0
+
+        if len(self.proc_info) == 0:
+            return
+
+        # make first one active
+        self.curr_proc = 0
+        self.move_to_running(STATE_READY)
+        # OUTPUT: heade`[rs for each column
+        print ('%s' % 'Time',) 
+        for pid in range(len(self.proc_info)):
+            print ('%10s' % ('PID:%2d' % (pid)),)
+
+        print ('')
+
+        # init statistics
+        cpu_busy = 0
+
+        while self.get_num_active() > 0:
+            clock_tick += 1
+            
+            # if current proc is RUNNING and has an instruction, execute it
+            # statistics clock_tick
+            instruction_to_execute = ''
+            if self.proc_info[self.curr_proc][PROC_STATE] == STATE_RUNNING and \
+                   len(self.proc_info[self.curr_proc][PROC_CODE]) > 0:
+                #YOUR CODE
+                instruction_to_execute = self.proc_info[self.curr_proc][PROC_CODE].pop(0)
+            # OUTPUT: print what everyone is up to
+            print ('%3d ' % clock_tick,)
+            for pid in range(len(self.proc_info)):
+                if pid == self.curr_proc and instruction_to_execute != '':
+                    print ('%10s' % ('RUN:'+instruction_to_execute),)
+                else:
+                    print ('%10s' % (self.proc_info[pid][PROC_STATE]),)
+
+            print ('')
+
+            # if this is an YIELD instruction, switch to ready state
+            # and add an io completion in the future
+            #print(self.curr_proc)
+            #self.check_if_done()
+            if instruction_to_execute == DO_YIELD:
+                #YOUR CODE
+                self.check_if_done()
+                nums = self.next_proc(self.curr_proc)
+                #print("nums: ")
+                #print(nums)
+                #print(" self.curr_proc: ")
+                #print(self.curr_proc)
+                #print("\n")
+                if nums == self.curr_proc:
+                    #print(self.curr_proc)
+                    self.check_if_done()
+                    #self.move_to_ready(STATE_RUNNING,self.curr_proc)
+                    #self.curr_proc = nums
+                    #self.move_to_running(STATE_READY)
+					
+                else:
+                    self.move_to_ready(STATE_RUNNING,self.curr_proc)
+                    self.curr_proc = nums
+                    self.move_to_running(STATE_READY)
+					
+            # ENDCASE: check if currently running thing is out of instructions
+            self.check_if_done()
+        return (clock_tick)
+        
+#
+# PARSE ARGUMENTS
+#
+
+parser = OptionParser()
+parser.add_option('-s', '--seed', default=0, help='the random seed', action='store', type='int', dest='seed')
+parser.add_option('-l', '--processlist', default='',
+                  help='a comma-separated list of processes to run, in the form X1:Y1,X2:Y2,... where X is the number of instructions that process should run, and Y the chances (from 0 to 100) that an instruction will use the CPU or issue an YIELD',
+                  action='store', type='string', dest='process_list')
+parser.add_option('-p', '--printstats', help='print statistics at end; only useful with -c flag (otherwise stats are not printed)', action='store_true', default=False, dest='print_stats')
+(options, args) = parser.parse_args()
+
+random.seed(options.seed)
+
+s = scheduler()
+
+# example process description (10:100,10:100)
+for p in options.process_list.split(','):
+    s.load(p)
+
+
+print ('Produce a trace of what would happen when you run these processes:')
+for pid in range(s.get_num_processes()):
+    print ('Process %d' % pid)
+    for inst in range(s.get_num_instructions(pid)):
+        print ('  %s' % s.get_instruction(pid, inst))
+    print ('')
+print ('Important behaviors:')
+print ('  System will switch when the current process is FINISHED or ISSUES AN YIELD')
+
+(clock_tick) = s.run()
+
+if options.print_stats:
+    print ('')
+    print ('Stats: Total Time %d' % clock_tick)
+    print ('')
