@@ -39,9 +39,12 @@
 
 即在ucore运行过程中通过`cprintf`函数来完整地展现出来多个进程在调度算法和框架的支撑下，在相关调度点如何动态调度和执行的细节。(约全面细致约好)
 
+
 请完成如下练习，完成代码填写，并形成spoc练习报告
 > 需写练习报告和简单编码，完成后放到git server 对应的git repo中
-
+    
+    >在do_wait(),do_exit(),trap()等函数中发现有schedule()的调用，cprintf（"the schedule() is used in wait/exit/trap"）；
+    这样就可以观察动态调度和执行的细节。
 ### 练习用的[lab6 spoc exercise project source code](https://github.com/chyyuu/ucore_lab/tree/master/labcodes_answer/lab6_result)
 
 
