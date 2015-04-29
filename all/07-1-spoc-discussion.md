@@ -72,6 +72,7 @@
   - 理解flag.s,peterson.s,test-and-set.s,ticket.s,test-and-test-and-set.s 请通过x86.py分析这些代码是否实现了锁机制？请给出你的实验过程和结论说明。能否设计新的硬件原子操作指令Compare-And-Swap,Fetch-And-Add？
  
       > flag.s并不能实现锁机制。
+per
         
         peterson.s实现了锁机制。
         
