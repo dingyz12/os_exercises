@@ -54,9 +54,9 @@ s.count--;              //有可用资源，占用该资源；
 
 -----------------------------
 
-    > 丁延卓 计21 第十题
+   丁延卓 计21 第十题
       
-    > 信号量
+   信号量
         #!/usr/bin/env python
 	import threading
 	import random
