@@ -109,9 +109,12 @@ s.count--;              //有可用资源，占用该资源；
 			else:
 				p = Writer()
 				p.start()
+	
 			
 条件变量：
-    #!/usr/bin/env python
+
+
+    	#!/usr/bin/env python
 	import threading
 	import random
 	import time
