@@ -52,13 +52,13 @@ s.count--;              //有可用资源，占用该资源；
 
 1. （spoc） 每人用python threading机制用信号量和条件变量两种手段分别实现[47个同步问题](07-2-spoc-pv-problems.md)中的一题。向勇老师的班级从前往后，陈渝老师的班级从后往前。请先理解[]python threading 机制的介绍和实例](https://github.com/chyyuu/ucore_lab/tree/master/related_info/lab7/semaphore_condition)
 
------------------------------
 
-   丁延卓 计21 第十题
+
+丁延卓 计21 第十题
       
-   信号量
-        #!/usr/bin/env python
-	import threading
+信号量
+    #!/usr/bin/env python
+    import threading
 	import random
 	import time
 	countMutex = threading.Semaphore(1)
@@ -110,3 +110,98 @@ s.count--;              //有可用资源，占用该资源；
 				p = Writer()
 				p.start()
 			
+条件变量：
+    #!/usr/bin/env python
+	import threading
+	import random
+	import time
+	condw = threading.Condition()
+	condr = threading.Condition()
+	cond = threading.Condition()
+	wr = 0
+	ar = 0
+	ww = 0 
+	aw = 0
+	a_list = []
+	a_num = 0
+	class Reader(threading.Thread):
+		def __init__(self):
+			threading.Thread.__init__(self)
+		def run(self):
+			#print(self.name)
+			global condw, condr,cond, wr, ar, ww, aw, a_list
+			if cond.acquire():
+				while ww + aw > 0: 
+					wr +=1
+					a_list.append(0)
+					condr.acquire()
+					cond.release()
+					condr.wait()
+					cond.acquire()
+					condr.release()
+					wr-=1
+				ar = ar + 1
+				#print("proc(%s) ar(++) is: %s" %(self.name,ar))
+				cond.release()
+			print("Reader(%s) is reading, active reader is %s" %(self.name, ar))
+			time.sleep(1)
+			#print(self.name)
+			if cond.acquire():
+				ar = ar - 1
+				#print("proc(%s) ar(--) is: %s" %(self.name,ar))
+				if ar == 0 and ww >0 :
+					condw.acquire()
+					a_list.pop()
+					#print("condw notify")
+					condw.notify()
+					condw.release()
+				cond.release()
+	class Writer(threading.Thread):
+		def __init(self):
+			threading.Thread.__init__(self)
+		def run(self):
+			global condw, condr,cond, wr, ar, ww, aw, a_list
+			if cond.acquire():
+				while aw + ar > 0 :
+					ww +=1
+					a_list.append(1)
+					condw.acquire()
+					#print("W1%s" %self.name)  
+					cond.release()              
+					condw.wait()
+					#cond.release()
+					#print("W2%s" %self.name) 
+					#print("W1%s" %self.name) 
+					ww -=1
+				aw +=1
+				condw.release()
+			print("Writer(%s) is writing, now wait write %s" %(self.name,ww))
+			time.sleep(1)
+			if cond.acquire():
+				aw -=1
+				while len(a_list) != 0 :
+					#print(a_list)
+					l = a_list.pop()
+					#print(l)
+					if l == 1 :
+						condw.acquire()
+						condw.notify()
+						condw.release()
+						#a_list.pop()
+						break
+					else:
+						condr.acquire()
+						condr.notify()
+						condr.release()
+						#a_list.pop()
+				cond.release()
+	if __name__ == "__main__":
+		#0 reader 1 writer
+		list_t = [0,0,0,0,1,0,1]
+		for i in list_t:
+			if i == 1:
+				p = Writer()
+				p.start()
+			else:
+				p = Reader()
+				p.start()
