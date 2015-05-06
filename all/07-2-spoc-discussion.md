@@ -56,63 +56,56 @@ s.count--;              //有可用资源，占用该资源；
     > 丁延卓 计21 第十题
       
     > 信号量
-          #!/usr/bin/env python
-import threading
-import random
-import time
-
-countMutex = threading.Semaphore(1)
-
-writeMutex = threading.Semaphore(1)
-
-canReadMutex = threading.Semaphore(1)
-
-rCount = 0
-
-class Reader(threading.Thread):
-    def __init__(self):
-        threading.Thread.__init__(self)
-        
-    def run(self):
-        global countMutex, rCount, writeMutex,canReadMutex
-        canReadMutex.acquire()
-        canReadMutex.release()
-        
-        countMutex.acquire()
-        if rCount == 0:
-            writeMutex.acquire()
-        rCount += 1
-        countMutex.release()
-        print("proc(%s) start  reading" %(self.name))
-        time.sleep(random.randrange(1,2))
-        print("proc(%s) end  reading" %(self.name))
-        countMutex.acquire()
-        rCount -= 1
-        if rCount == 0:
-            writeMutex.release()
-        countMutex.release()
-class Writer(threading.Thread):
-    def __init(self):
-        threading.Thread.__init__(self)
-        
-    def run(self):
-        global countMutex,rCount,writeMutex,canReadMutex
-        canReadMutex.acquire()
-        writeMutex.acquire()
-
-        print("proc(%s) start writing " %(self.name))
-        time.sleep(random.randrange(1,2))
-        print("proc(%s) end writing " %(self.name))
-
-        writeMutex.release()
-        canReadMutex.release()
-if __name__ == "__main__":
-    for p in range(1,15):
-        i = random.randint(1,4)%2
-        if i == 0:
-            p = Reader()
-            p.start()
-        else:
-            p = Writer()
-            p.start()
-        
+         	#!/usr/bin/env python
+	import threading
+	import random
+	import time
+	countMutex = threading.Semaphore(1)
+	writeMutex = threading.Semaphore(1)
+	canReadMutex = threading.Semaphore(1)
+	rCount = 0
+	class Reader(threading.Thread):
+		def __init__(self):
+			threading.Thread.__init__(self)
+			
+		def run(self):
+			global countMutex, rCount, writeMutex,canReadMutex
+			canReadMutex.acquire()
+			canReadMutex.release()
+			
+			countMutex.acquire()
+			if rCount == 0:
+				writeMutex.acquire()
+			rCount += 1
+			countMutex.release()
+			print("proc(%s) start  reading" %(self.name))
+			time.sleep(random.randrange(1,2))
+			print("proc(%s) end  reading" %(self.name))
+			countMutex.acquire()
+			rCount -= 1
+			if rCount == 0:
+				writeMutex.release()
+			countMutex.release()
+	class Writer(threading.Thread):
+		def __init(self):
+			threading.Thread.__init__(self)
+			
+		def run(self):
+			global countMutex,rCount,writeMutex,canReadMutex
+			canReadMutex.acquire()
+			writeMutex.acquire()
+			print("proc(%s) start writing " %(self.name))
+			time.sleep(random.randrange(1,2))
+			print("proc(%s) end writing " %(self.name))
+			writeMutex.release()
+			canReadMutex.release()
+	if __name__ == "__main__":
+		for p in range(1,15):
+			i = random.randint(1,4)%2
+			if i == 0:
+				p = Reader()
+				p.start()
+			else:
+				p = Writer()
+				p.start()
+			
