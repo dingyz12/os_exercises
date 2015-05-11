@@ -290,7 +290,20 @@
 		# else:
 		#     print "Failed"
  - (spoc) 以小组为单位，请思考在lab1~lab5的基础上，是否能够实现IPC机制，请写出如何实现信号，管道或共享内存（三选一）的设计方案。
+	> 数据结构：
+        > 每个进程中维护一个列表，存储每个signal的编号和相应的处理程序的位置
  
+	>执行过程：
+	- signal函数是一个系统调用，在用户程序中执行时，向本地signal列表中对应的信号编号绑定一个处理程序
+	- 系统接收到信号时，跳入中断处理程序
+	- 判断是否是一个信号
+	- 若是信号则通过调用current进程中signal列表储存的对应信号的处理程序
+	- 此时保存中断前的trapframe保存，记为①
+	- 将返回的trapframe替换为处理程序的trapframe，记为②
+	- 中断返回时返回至处理程序
+	- 处理程序结束后返回信号发生前的程序的trapframe①，即信号处理完成 
+
+
  - (spoc) 扩展：用C语言实现某daemon程序，可检测某网络服务失效或崩溃，并用信号量机制通知重启网络服务。[信号机制的例子](https://github.com/chyyuu/ucore_lab/blob/master/related_info/lab7/ipc/signal-ex1.c)
 
  - (spoc) 扩展：用C语言写测试用例，测试管道、消息队列和共享内存三种通信机制进行不同通信间隔和通信量情况下的通信带宽、通信延时、带宽抖动和延时抖动方面的性能差异。[管道的例子](https://github.com/chyyuu/ucore_lab/blob/master/related_info/lab7/ipc/pipe-ex2.c)
