@@ -45,7 +45,7 @@
 
  - （spoc） 每人用python实现[银行家算法](https://github.com/chyyuu/ucore_lab/blob/master/related_info/lab7/deadlock/bankers-homework.py)。大致输出可参考[参考输出](https://github.com/chyyuu/ucore_lab/blob/master/related_info/lab7/deadlock/example-output.txt)。除了`YOUR CODE`部分需要填写代码外，在算法的具体实现上，效率也不高，可进一步改进执行效率。
 
-   >	import os
+    import os
     import random
     import numpy as np
     import itertools
@@ -53,14 +53,12 @@
         def __init__(self, totalResource):
             #initiating
             self.RESOURCE = totalResource
-
         def SignProcesses(self, max_, allocated_):
             self.max = max_
             self.allocated = allocated_
             self.need = self.CalcNeed()
             self.avaliable = self.CalcAvaliable()
             self.finished = [False]*len(self.allocated)
-
         def Difference(self,a,b):
             #return matrix subtracted from a by b
             res = []
@@ -70,11 +68,9 @@
                     tmp.append(a[i][j]-b[i][j])
                 res.append(tmp)
             return res
-
         def CalcNeed(self):
             #calc request by subtracting signed matrix from max matrix
             return self.Difference(self.max,self.allocated)
-
         def CalcAvaliable(self):
             """Calc Avaliable Resource"""
             a = self.allocated
@@ -85,9 +81,7 @@
                     tmp += a[i][j]
                 res.append(self.RESOURCE[j] - tmp)
             return res
-
         def ExecuteProcess(self,index):
-
             #check if less avaliable than Request
             # YOUR CODE, 2012011395
             ok = True
@@ -108,7 +102,6 @@
             # YOUR CODE, 2012011395
             #allocating END here
             #pass
-
         def TempSafeCheckAfterRelease(self):
             #check if at least one request can be done after previous process done. not check whole sequances.
             #if every element of Requests can't accepted after previous process done, this mean it is not safe state
@@ -127,7 +120,6 @@
             return False
             #check END here
             #pass
-
         def print_matrixes(self):
             print "_____________________________________________"
             print "MAX\t\tAllocated\tNeed"
@@ -136,19 +128,16 @@
             print "_____________________________________________"
             print "Resources:"
             print "Total: %s\tAvailable: %s\n" % (self.RESOURCE, self.avaliable)
-
         def ReleasingProcess(self,index):
             for i in range(0,len(self.RESOURCE)):
                 self.finished[index] = True
                 self.allocated[index][i] = 0
             self.avaliable = self.CalcAvaliable()
-
         def Execute(self):
             i = 0
             # get all permutation of processes
             perm = itertools.permutations(range(procnum), procnum)
             permArray = np.asarray(list(perm))
-
             for arr in permArray:
                 for i in arr:
                     if self.finished[i] == False:
@@ -158,15 +147,10 @@
                         #check if less avaliable than Request
                         if self.ExecuteProcess(i):
                             print "Dispatching Done..."
-
                             self.print_matrixes()
-
                             print "-----Releasing Process------"
-
                             self.ReleasingProcess(i)
-
                             self.print_matrixes()
-
                             #check if at least one request can be done after previous process done. not check whole sequances.
                             #if every element of Requests can't accepted after previous process done, this mean it is not safe state
                             if not (self.TempSafeCheckAfterRelease()):
@@ -175,12 +159,10 @@
                             processes.append(i)
                         else:
                             print "HOLD: not enough Resource"
-
                     if i == len(self.allocated)-1:
                         i = 0
                     else:
                         i += 1
-
                     check = True
                     for k in range(0,len(self.allocated)):
                         if self.finished[k] == False:
@@ -191,7 +173,6 @@
                         break
             #every permutation of processes is false
             return False
-
     def getmax():
         res = []
         for j in range(procnum):
@@ -210,7 +191,6 @@
                 tmp.append((int)(randnum*remain_max*0.8))
             res.append(tmp)
         return res
-
     def getallocated():
         res = []
         for j in range(procnum):
